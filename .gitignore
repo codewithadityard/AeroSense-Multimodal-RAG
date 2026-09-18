@@ -1,0 +1,70 @@
+# ==============================
+# Virtual Environment
+# ==============================
+venv/
+medical_rag/
+.venv/
+env/
+
+# ==============================
+# Python Cache
+# ==============================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ==============================
+# Environment Variables / Secrets
+# ==============================
+.env
+*.env
+
+# ==============================
+# Jupyter Notebook
+# ==============================
+.ipynb_checkpoints/
+
+# ==============================
+# Chroma Vector Databases
+# ==============================
+chroma_db/
+chroma_multimodal_db/
+
+output_elements/
+
+# ==============================
+# Qdrant Vector Database
+# ==============================
+qdrant_colpali_db/
+
+# ==============================
+# Trained Model / Large Model Files
+# ==============================
+*.pth
+*.pt
+*.bin
+*.safetensors
+
+# ==============================
+# Logs
+# ==============================
+*.log
+
+data/
+
+__pycache__
+
+NASA_Turbofan_Engine_Degradation
+
+
+# ==============================
+# IDE
+# ==============================
+.vscode/
+.idea/
+
+# ==============================
+# OS Files
+# ==============================
+.DS_Store
+Thumbs.db
