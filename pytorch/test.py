@@ -57,11 +57,29 @@ def run_aerosense_stream(model, test_loader, scaler, trigger_threshold=0.80):
                     mock_engine_id = 101
                     mock_cycle = 150
                     
-                    # 5. Hand off to the RAG + Vision LLM system
+                    # 5. Synthesize dynamic telemetry query for ColPali
+                    # Extract key thermodynamic & aerodynamic indicators:
+                    # Sensor s_3: HPC outlet temp (index 5)
+                    # Sensor s_7: HPC outlet pressure (index 9)
+                    # Sensor s_8: Physical fan speed (index 10)
+                    # Sensor s_9: Physical core speed (index 11)
+                    t30_val = raw_sensor_values[5]
+                    p30_val = raw_sensor_values[9]
+                    fan_speed = raw_sensor_values[10]
+                    core_speed = raw_sensor_values[11]
+                    
+                    dynamic_query = (
+                        f"Troubleshooting turbofan engine degradation: elevated HPC outlet temperature T30 ({t30_val:.1f} R), "
+                        f"HPC outlet pressure P30 ({p30_val:.1f} psia), core speed Nc ({core_speed:.1f} rpm). "
+                        f"Fault isolation procedure for High Pressure Compressor (HPC) and Fan Degradation."
+                    )
+                    
+                    # 6. Hand off to the RAG + Vision LLM system
                     diagnose_anomaly(
                         sensor_readings=raw_sensor_values,
                         engine_unit_nr=mock_engine_id,
-                        current_cycle=mock_cycle
+                        current_cycle=mock_cycle,
+                        query=dynamic_query
                     )
                     
                     print("==================================================")
@@ -77,22 +95,44 @@ def run_aerosense_stream(model, test_loader, scaler, trigger_threshold=0.80):
 if __name__ == "__main__":
     print("=== Initializing AeroSense Pipeline ===")
     
-    # 1. Load Data & Scaler
+    # 1. Resolve Data Paths
+    data_dir = os.path.join(parent_dir, "NASA_Turbofan_Engine_Degradation")
+    if not os.path.exists(data_dir):
+        data_dir = os.path.join(current_dir, "NASA_Turbofan_Engine_Degradation")
+        
+    train_file = os.path.join(data_dir, "train_FD003.txt")
+    test_file = os.path.join(data_dir, "test_FD003.txt")
+    truth_file = os.path.join(data_dir, "RUL_FD003.txt")
+    
+    if not os.path.exists(test_file):
+        print(f"\n[ERROR] NASA C-MAPSS dataset not found at '{data_dir}'.")
+        print("Please place 'train_FD003.txt', 'test_FD003.txt', and 'RUL_FD003.txt' in 'NASA_Turbofan_Engine_Degradation/'.")
+        sys.exit(1)
+
     print("Loading CMAPSS Data...")
     train_dataset, test_dataset, scaler = prepare_cmapss_data(
-    train_file="NASA_Turbofan_Engine_Degradation/train_FD003.txt", 
-    test_file="NASA_Turbofan_Engine_Degradation/test_FD003.txt",
-    truth_file="NASA_Turbofan_Engine_Degradation/RUL_FD003.txt"
-)
+        train_file=train_file, 
+        test_file=test_file,
+        truth_file=truth_file
+    )
     test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
     
-    # 2. Load Trained PyTorch Model
-    print("Loading PyTorch Watchdog...")
+    # 2. Resolve Model Weights Path
+    model_path = os.path.join(current_dir, "aerosense.pth")
+    if not os.path.exists(model_path):
+        alt_path = os.path.join(parent_dir, "aerosense.pth")
+        if os.path.exists(alt_path):
+            model_path = alt_path
+            
+    if not os.path.exists(model_path):
+        print(f"\n[ERROR] Model weights not found at '{model_path}'.")
+        print("Please run 'python pytorch/train.py' first to train and save 'aerosense.pth'.")
+        sys.exit(1)
+        
+    print(f"Loading PyTorch Watchdog weights from '{model_path}'...")
     device = "cuda" if torch.cuda.is_available() else "cpu"
     watchdog_model = AeroSense()
-    
-    # Make sure you actually saved this file during your train.py run!
-    watchdog_model.load_state_dict(torch.load("aerosense.pth", weights_only=True))
+    watchdog_model.load_state_dict(torch.load(model_path, weights_only=True))
     
     # 3. Run the live simulation!
     run_aerosense_stream(watchdog_model, test_loader, scaler, trigger_threshold=0.80)

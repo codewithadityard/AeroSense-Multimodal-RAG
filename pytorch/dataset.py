@@ -4,11 +4,17 @@ from torch.utils.data import Dataset
 from sklearn.preprocessing import StandardScaler
 
 
-# Simple PyTorch Dataset wrapper for pre-processed data
+import os
 
-train_file="NASA_Turbofan_Engine_Degradation/train_FD003.txt"
-test_file="NASA_Turbofan_Engine_Degradation/test_FD003.txt"
-truth_file="NASA_Turbofan_Engine_Degradation/RUL_FD003.txt"
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_dir)
+data_dir = os.path.join(project_root, "NASA_Turbofan_Engine_Degradation")
+if not os.path.exists(data_dir):
+    data_dir = os.path.join(current_dir, "NASA_Turbofan_Engine_Degradation")
+
+train_file = os.path.join(data_dir, "train_FD003.txt")
+test_file = os.path.join(data_dir, "test_FD003.txt")
+truth_file = os.path.join(data_dir, "RUL_FD003.txt")
 
 class PreparedCMAPSSDataset(Dataset):
     def __init__(self, features, labels):

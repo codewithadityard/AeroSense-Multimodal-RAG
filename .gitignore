@@ -5,6 +5,7 @@ venv/
 medical_rag/
 .venv/
 env/
+aerosense/
 
 # ==============================
 # Python Cache

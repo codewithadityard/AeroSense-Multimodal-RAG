@@ -1,21 +1,44 @@
-# --- Document Partitioning & Extraction ---
+# --- Document Partitioning & PDF Parsing ---
 unstructured[pdf,local-inference]>=0.12.0
 unstructured-inference>=0.7.0
 pdf2image>=1.17.0
 pdfminer.six>=20231205
 pytesseract>=0.3.10
 pi-heif>=0.15.0
+PyMuPDF>=1.24.0
 
-# --- Computer Vision & Layout Parsing ---
+# --- PyTorch & Traditional ML (Watchdog) ---
+torch>=2.2.0
+torchvision>=0.17.0
+scikit-learn>=1.4.0
+
+# --- Computer Vision & Transformers ---
 timm>=0.9.12
 einops>=0.7.0
 pillow>=10.2.0
 opencv-python-headless>=4.9.0
-
-# --- Transformers & Local Models (Florence-2 / Hugging Face) ---
 transformers>=4.40.0
 accelerate>=0.28.0
 huggingface-hub>=0.22.0
+open-clip-torch>=2.24.0
+
+# --- Vector Databases & Retrieval ---
+chromadb>=0.5.0
+qdrant-client>=1.9.0
+colpali-engine>=0.3.0
+sentence-transformers>=2.6.0
+
+# --- LangChain & LLM Providers ---
+langchain>=0.2.0
+langchain-core>=0.2.0
+langchain-community>=0.2.0
+langchain-chroma>=0.1.0
+langchain-huggingface>=0.0.3
+langchain-groq>=0.1.0
+groq>=0.9.0
+
+# --- Web UI & Dashboard ---
+streamlit>=1.35.0
 
 # --- Data Handling & Utilities ---
 pydantic>=2.6.0

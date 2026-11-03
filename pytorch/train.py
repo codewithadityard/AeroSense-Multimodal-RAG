@@ -131,4 +131,6 @@ trained_model = train(model, train_loader, epochs=15)
 tested_model=test(model,test_loader)
 
 
-torch.save(model.state_dict(), "aerosense.pth")
+save_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "aerosense.pth")
+torch.save(model.state_dict(), save_path)
+print(f"Model successfully saved to {save_path}")
