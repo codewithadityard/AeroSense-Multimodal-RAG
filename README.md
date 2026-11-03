@@ -53,29 +53,29 @@ Traditional Retrieval-Augmented Generation (RAG) relies on parsing text into par
 
 ```mermaid
 flowchart TD
-    subgraph S1 ["1. Telemetry & Anomaly Detection"]
-        A["NASA C-MAPSS Sensor Stream<br/>(24 Channels: T30, P30, Nc, Nf)"] --> B["PyTorch Watchdog MLP<br/>(Binary RUL Classifier)"]
-        B -->|P(failure) >= 0.80| C["Watchdog Anomaly Trigger"]
-        C --> D["Scaler Inverse Transform<br/>(Recovers Physical Units: °R, psia, rpm)"]
+    subgraph S1 ["1. Telemetry and Anomaly Detection"]
+        A["NASA C-MAPSS Sensor Stream<br/>24 Channels: T30, P30, Nc, Nf"] --> B["PyTorch Watchdog MLP<br/>Binary RUL Classifier"]
+        B -->|"Failure Probability >= 0.80"| C["Watchdog Anomaly Trigger"]
+        C --> D["Scaler Inverse Transform<br/>Recovers Physical Units: deg R, psia, rpm"]
     end
 
-    subgraph S2 ["2. The Telemetry-to-Vision Bridge"]
-        D --> E["Dynamic Query Synthesizer<br/>(Aerospace Domain Formulation)"]
-        E --> F["ColPali Multi-Vector Query<br/>(PaliGemma-3B Token Embeddings)"]
+    subgraph S2 ["2. Telemetry-to-Vision Bridge"]
+        D --> E["Dynamic Query Synthesizer<br/>Aerospace Domain Formulation"]
+        E --> F["ColPali Multi-Vector Query<br/>PaliGemma-3B Token Embeddings"]
     end
 
-    subgraph S3 ["3. Late-Interaction Retrieval (Qdrant)"]
-        G["500-Page PDF Technical Manuals"] --> H["Full-Page Visual Ingestion<br/>(1,024 Patches per Page)"]
-        H --> I["Qdrant Multi-Vector Collection<br/>(Native MaxSim Comparator)"]
-        F <-->|Patch-Level MaxSim Scoring| I
-        I -->|Top Visual Match: Page 34| J["Base64 Exact Page Extractor"]
+    subgraph S3 ["3. Late-Interaction Retrieval: Qdrant"]
+        G["500-Page PDF Technical Manuals"] --> H["Full-Page Visual Ingestion<br/>1,024 Patches per Page"]
+        H --> I["Qdrant Multi-Vector Collection<br/>Native MaxSim Comparator"]
+        F -->|"Patch-Level MaxSim Search"| I
+        I -->|"Top Visual Match: Page 34"| J["Base64 Exact Page Extractor"]
     end
 
     subgraph S4 ["4. Grounded Multimodal Diagnosis"]
-        D --> K["Groq LPU Vision Engine<br/>(Qwen 2.5-VL 27B)"]
-        J -->|Inline PDF Page View| L["Browser PDF Viewer"]
-        J -->|Raw High-Res Page Pixels| K
-        K --> M["Grounded Maintenance Report<br/>(Root-Cause & Immediate Flight-Line Actions)"]
+        D --> K["Groq LPU Vision Engine<br/>Qwen 2.5-VL 27B"]
+        J -->|"Inline PDF Page View"| L["Browser PDF Viewer"]
+        J -->|"Raw High-Res Page Pixels"| K
+        K --> M["Grounded Maintenance Report<br/>Root-Cause and Actionable Steps"]
     end
 ```
 
